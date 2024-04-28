@@ -59,6 +59,27 @@ app.delete("/api/persons/:id", (req, res) => {
   res.status(204).end();
 });
 
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+  // console.log(person);
+  if (!body.name || !body.number) {
+    return res.status(400).json({ error: "content missing" });
+  }
+
+  const newId = Math.floor(Math.random() * 100000);
+  //create new person object
+  const newPerson = {
+    id: newId,
+    name: body.name,
+    number: body.number,
+  };
+
+  //add new person to phonebook
+  persons = persons.concat(newPerson);
+
+  res.json(newPerson);
+});
+
 const PORT = 3001;
 
 app.listen(PORT, () => {
