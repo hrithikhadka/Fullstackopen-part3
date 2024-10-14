@@ -27,6 +27,24 @@ app.get("/api/persons", (req, res) => {
   });
 });
 
+//handle new person
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+
+  if (!body.name || !body.number) {
+    return res.status(400).json({ error: "missing name or number" });
+  }
+
+  const newPerson = new Person({
+    name: body.name,
+    number: body.number,
+  });
+
+  newPerson.save().then((savedPerson) => {
+    res.json(savedPerson);
+  });
+});
+
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
