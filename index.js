@@ -22,9 +22,18 @@ app.use(
 
 //get all persons
 app.get("/api/persons", (req, res) => {
-  Person.find({}).then((persons) => {
-    res.json(persons);
-  });
+  Person.find({})
+    .then((persons) => {
+      if (persons) {
+        res.json(persons);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).end();
+    });
 });
 
 //handle new person
@@ -40,9 +49,27 @@ app.post("/api/persons", (req, res) => {
     number: body.number,
   });
 
-  newPerson.save().then((savedPerson) => {
-    res.json(savedPerson);
-  });
+  newPerson
+    .save()
+    .then((savedPerson) => {
+      res.json(savedPerson);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json("failed to save new person");
+    });
+});
+
+//delete a phonebook entry
+app.delete("/api/persons/:id", (req, res, next) => {
+  Person.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json({ error: "malformatted id!" });
+    });
 });
 
 const PORT = process.env.PORT || 3001;
