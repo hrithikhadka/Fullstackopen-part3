@@ -54,10 +54,7 @@ app.post("/api/persons", (req, res) => {
     .then((savedPerson) => {
       res.json(savedPerson);
     })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json("failed to save new person");
-    });
+    .catch((err) => next(err));
 });
 
 //delete a phonebook entry
@@ -66,11 +63,21 @@ app.delete("/api/persons/:id", (req, res, next) => {
     .then((result) => {
       res.status(204).end();
     })
-    .catch((err) => {
-      console.log(err);
-      res.status(400).json({ error: "malformatted id!" });
-    });
+    .catch((err) => next(err));
 });
+
+//error handling middleware
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 
