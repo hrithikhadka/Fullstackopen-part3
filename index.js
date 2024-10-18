@@ -57,6 +57,24 @@ app.post("/api/persons", (req, res) => {
     .catch((err) => next(err));
 });
 
+//handle update
+app.put("/api/persons/:id", (req, res, next) => {
+  const { id } = req.params;
+  const { number } = req.body;
+
+  const updatedNumber = { number };
+
+  Person.findByIdAndUpdate(id, updatedNumber, { new: true })
+    .then((updatedPerson) => {
+      if (updatedPerson) {
+        res.json(updatedPerson);
+      } else {
+        res.status(404).json({ error: "Not found!" });
+      }
+    })
+    .catch((err) => next(err));
+});
+
 //delete a phonebook entry
 app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
