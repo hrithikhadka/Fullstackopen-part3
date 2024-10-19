@@ -26,6 +26,7 @@ app.get("/api/persons", (req, res) => {
     .then((persons) => {
       if (persons) {
         res.json(persons);
+        console.log(persons);
       } else {
         res.status(404).end();
       }
@@ -34,6 +35,20 @@ app.get("/api/persons", (req, res) => {
       console.log(err);
       res.status(500).end();
     });
+});
+
+//get person by id
+app.get("/api/persons/:id", (req, res, next) => {
+  const { id } = req.params;
+  Person.findById(id)
+    .then((persons) => {
+      if (persons) {
+        res.json(persons);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((err) => next(err));
 });
 
 //handle new person
@@ -82,6 +97,19 @@ app.delete("/api/persons/:id", (req, res, next) => {
       res.status(204).end();
     })
     .catch((err) => next(err));
+});
+
+//get info
+app.get("/info", (req, res, next) => {
+  Person.find()
+    .then((persons) => {
+      const currentDate = new Date();
+      const info = `<p>Phonebook has info for ${persons.length} people</p>
+      <p>${currentDate}</p>
+      `;
+      res.send(info);
+    })
+    .catch((error) => next(error));
 });
 
 //error handling middleware
