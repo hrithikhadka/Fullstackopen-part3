@@ -97,7 +97,7 @@ app.put("/api/persons/:id", (req, res, next) => {
 //delete a phonebook entry
 app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
-    .then((result) => {
+    .then(() => {
       res.status(204).end();
     })
     .catch((err) => next(err));
